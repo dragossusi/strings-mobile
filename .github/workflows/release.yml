@@ -9,7 +9,21 @@ name: Upload Release Asset
 jobs:
   build:
     name: Upload Release Asset
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+        include:
+        - os: macos-latest
+          CONTENT_TYPE: application/x-elf
+          ASSET_NAME: strings-mobile-linux.kexe
+          ASSET_PATH: ./build/bin/linux/releaseExecutable/strings-mobile.kexe
+
+        - os: ubuntu-latest
+          CONTENT_TYPE: application/x-elf
+          ASSET_NAME: strings-mobile-macos.kexe
+          ASSET_PATH: ./build/bin/macos/releaseExecutable/strings-mobile.kexe
+
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -26,8 +40,8 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
-      - name: Upload Release Asset
-        id: upload-release-asset
+      - name: Upload Linux Asset
+        id: upload-linux-asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -36,3 +50,13 @@ jobs:
           asset_path: ./build/bin/linux/releaseExecutable/strings-mobile.kexe
           asset_name: strings-mobile.kexe
           asset_content_type: application/x-elf
+      - name: Upload Linux Asset
+        id: upload-macos-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: ${{ matrix.ASSET_PATH }}
+          asset_name: ${{ matrix.ASSET_NAME }}
+          asset_content_type: ${{ matrix.CONTENT_TYPE }}
