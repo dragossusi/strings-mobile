@@ -17,9 +17,9 @@ repositories {
     }
 }
 
+//details
 group = "ro.dragossusi"
 version = "0.1"
-
 
 kotlin {
     // For ARM, should be changed to iosArm32 or iosArm64
