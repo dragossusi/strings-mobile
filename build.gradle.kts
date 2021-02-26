@@ -19,7 +19,7 @@ repositories {
 
 //details
 group = "ro.dragossusi"
-version = "0.1"
+version = "0.2"
 
 kotlin {
 
