@@ -13,9 +13,9 @@ object AndroidWriter : Writer() {
     }
 
     override fun writeHeader(stringBuilder: StringBuilder) {
-        stringBuilder.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>")
-        stringBuilder.append("<!--generated strings-->")
-        stringBuilder.append("<resources>")
+        stringBuilder.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
+        stringBuilder.append("<!--generated strings-->\n")
+        stringBuilder.append("<resources>\n")
     }
 
     override fun writeEntry(stringBuilder: StringBuilder, key: String, value: String) {
