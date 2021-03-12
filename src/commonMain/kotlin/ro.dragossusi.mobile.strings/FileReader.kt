@@ -1,4 +1,4 @@
-package sample
+package ro.dragossusi.mobile.strings
 
 import pw.binom.io.Reader
 import pw.binom.io.file.*
