@@ -21,12 +21,7 @@ object IosWriter : Writer() {
     }
 
     override fun writeEntry(stringBuilder: StringBuilder, key: String, value: String) {
-        stringBuilder.append("\"$key\" = \"${value.replaceFormats()}\";\n")
-    }
-
-    private fun CharSequence.replaceFormats(): CharSequence {
-        val result = replace(Regex("[%][s]"), "\\%\\@")
-        return result.replace(Regex("[$][s]"), "\\$\\@")
+        stringBuilder.append("\"$key\" = \"${value.replaceQuotes().replaceIosFormats()}\";\n")
     }
 
 }

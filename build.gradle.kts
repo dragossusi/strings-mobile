@@ -75,7 +75,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api("pw.binom.io:file:0.1.26")
+                api("pw.binom.io:file:0.1.28")
                 api("com.github.ajalt.clikt:clikt:3.1.0")
             }
         }

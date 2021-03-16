@@ -47,7 +47,7 @@ object FileReader {
     }
 
     /**
-     * @return word and new position
+     * @return (word,lastChar) or null for new line
      */
     fun Reader.readWord(): String? {
         val stringBuilder = StringBuilder()
@@ -57,12 +57,21 @@ object FileReader {
                 return stringBuilder.toString()
             }
             QUOTE_SEPARATOR -> {
+                //get next char
                 var char = read()
-                while (char != QUOTE_SEPARATOR) {
-                    stringBuilder.append(char)
-                    //avoid out of bounds
-                    char = readCharFromLine() ?: break
-                }
+                do {
+                    if (char == QUOTE_SEPARATOR) {
+                        char = read()
+                        if (char == QUOTE_SEPARATOR) {
+                            stringBuilder.append('"')
+                            char = read()
+                        } else return stringBuilder.toString()
+                    } else {
+                        stringBuilder.append(char)
+                        //avoid out of bounds
+                        char = readCharFromLine() ?: break
+                    }
+                } while (true)
                 return stringBuilder.toString()
             }
             ENDL_START -> {
@@ -77,7 +86,7 @@ object FileReader {
                 stringBuilder.append(firstChar)
                 var char = read()
                 //read until separators
-                while (char != WORD_SEPARATOR && char != QUOTE_SEPARATOR && char != ENDL_START) {
+                while (char != WORD_SEPARATOR && char != ENDL_START) {
                     stringBuilder.append(char)
                     //avoid out of bounds
                     char = readCharFromLine() ?: break
