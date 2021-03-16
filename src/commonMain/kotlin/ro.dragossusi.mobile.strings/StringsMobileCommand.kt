@@ -1,4 +1,4 @@
-package sample
+package ro.dragossusi.mobile.strings
 
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument

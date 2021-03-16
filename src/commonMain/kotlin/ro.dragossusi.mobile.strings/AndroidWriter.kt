@@ -1,24 +1,30 @@
-package sample
+package ro.dragossusi.mobile.strings
 
-object AndroidWriter {
+object AndroidWriter : Writer() {
 
-    fun write(path: String, content: CsvData) {
+    override fun onFileWritten(lang: String) {
+        super.onFileWritten(lang)
+        println("Generated Android strings for $lang")
+    }
+
+    override fun createExportPath(path: String, lang: String): String {
         val exportPath = "$path/android"
-        content.languages.forEach { lang ->
-            if(lang.isEmpty()) return@forEach
-            val stringBuilder = StringBuilder()
-            stringBuilder.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>")
-            stringBuilder.append("<!--generated strings-->")
-            stringBuilder.append("<resources>")
-            content.keys.forEachIndexed { keyIndex, key ->
-                val value = content.values[lang]!!.getOrNull(keyIndex) ?: ""
-                val contentValue = transform(value)
-                stringBuilder.append("    <string name=\"$key\">$contentValue</string>\n")
-            }
-            stringBuilder.append("</resources>")
-            FileReader.writeFile("$exportPath/values-${lang.toLowerCase()}/strings.xml", stringBuilder.toString())
-            println("Generated Android strings for $lang")
-        }
+        return "$exportPath/values-${lang.toLowerCase()}/strings.xml"
+    }
+
+    override fun writeHeader(stringBuilder: StringBuilder) {
+        stringBuilder.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
+        stringBuilder.append("<!--generated strings-->\n")
+        stringBuilder.append("<resources>\n")
+    }
+
+    override fun writeEntry(stringBuilder: StringBuilder, key: String, value: String) {
+        val contentValue = transform(value)
+        stringBuilder.append("    <string name=\"$key\">$contentValue</string>\n")
+    }
+
+    override fun writeFooter(stringBuilder: StringBuilder) {
+        stringBuilder.append("</resources>")
     }
 
     private fun transform(content: String): String {

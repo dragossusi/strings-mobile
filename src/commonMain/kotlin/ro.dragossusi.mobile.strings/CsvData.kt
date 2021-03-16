@@ -1,6 +1,6 @@
-package sample
+package ro.dragossusi.mobile.strings
 
-class CsvData(
+class CsvData constructor(
     val languages: List<String>,
     val keys: List<String>,
     val values: Map<String, List<String>>,

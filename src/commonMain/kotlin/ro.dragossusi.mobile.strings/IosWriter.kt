@@ -1,25 +1,27 @@
-package sample
+package ro.dragossusi.mobile.strings
 
-object IosWriter {
+object IosWriter : Writer() {
 
-    fun write(path: String, content: CsvData) {
-        val exportPath = "$path/ios"
-        content.languages.forEach { lang ->
-            if(lang.isEmpty()) return@forEach
-            val stringBuilder = StringBuilder()
-            stringBuilder.append("//generated strings")
-            content.keys.forEachIndexed { keyIndex, key ->
-                val value = content.values[lang]!![keyIndex]
-                stringBuilder.append("\"$key\" = \"${value.replaceFormats()}\";\n")
-            }
-            FileReader.writeFile("$exportPath/localized$lang.strings", stringBuilder.toString())
-            println("Generated iOS strings for $lang")
-        }
+    override fun onFileWritten(lang: String) {
+        super.onFileWritten(lang)
+        println("Generated iOS strings for $lang")
     }
 
-    private fun CharSequence.replaceFormats(): CharSequence {
-        val result = replace(Regex("[%][s]"), "\\%\\@")
-        return result.replace(Regex("[$][s]"), "\\$\\@")
+    override fun createExportPath(path: String, lang: String): String {
+        val exportPath = "$path/ios"
+        return "$exportPath/localized$lang.strings"
+    }
+
+    override fun writeHeader(stringBuilder: StringBuilder) {
+        stringBuilder.append("//generated strings\n")
+    }
+
+    override fun writeFooter(stringBuilder: StringBuilder) {
+        //no footer
+    }
+
+    override fun writeEntry(stringBuilder: StringBuilder, key: String, value: String) {
+        stringBuilder.append("\"$key\" = \"${value.replaceQuotes().replaceIosFormats()}\";\n")
     }
 
 }
