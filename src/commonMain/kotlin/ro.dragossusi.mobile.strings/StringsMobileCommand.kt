@@ -16,10 +16,13 @@ class StringsMobileCommand : CliktCommand() {
         File(it).isExist
     }
     val destination: String by argument(help = "Destination").default(".")
-    val platform: WriteTarget by option(help = "platform").enum<WriteTarget>().default(WriteTarget.ALL)
+    val platform: WriteTarget by option(help = "platform").enum<WriteTarget>()
+        .default(WriteTarget.ALL)
 
     override fun run() {
         val data = CsvData.from(FileReader.readCsv(path))
+
+        data.check()
 
         if (platform == WriteTarget.ANDROID || platform == WriteTarget.ALL)
             AndroidWriter.write(destination, data)

@@ -1,5 +1,7 @@
 package ro.dragossusi.mobile.strings
 
+import ro.dragossusi.mobile.strings.print.warning
+
 class CsvData constructor(
     val languages: List<String>,
     val keys: List<String>,
@@ -7,6 +9,18 @@ class CsvData constructor(
     val size: Int
 ) {
 
+    fun check() {
+        val max = values.values.maxOfOrNull {
+            it.count(String::isNotEmpty)
+        } ?: return
+        values.forEach { (key, value) ->
+            if (value.count(String::isNotEmpty) != max) {
+                warning(
+                    "$key has less values",
+                )
+            }
+        }
+    }
 
     companion object {
         fun from(csv: List<List<String>>): CsvData {
@@ -23,11 +37,13 @@ class CsvData constructor(
             for (i in 1 until csv.size) {
                 val line = csv[i]
                 println(
-                    "reading line: ${line.joinToString(
-                        ";",
-                        prefix = "[",
-                        postfix = "]"
-                    )}"
+                    "reading line: ${
+                        line.joinToString(
+                            ";",
+                            prefix = "[",
+                            postfix = "]"
+                        )
+                    }"
                 )
                 //read key
                 keys += line.first()

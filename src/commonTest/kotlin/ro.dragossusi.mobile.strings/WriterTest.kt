@@ -7,7 +7,9 @@ class WriterTest {
 
     @Test
     fun testReplaceQuotes() {
-        val text = """asd123 "asd"  asd"""
+        val text = """
+            asd123 "asd"  asd
+            """.trimIndent()
 
         assertEquals(
             """asd123 \"asd\"  asd""",

@@ -13,6 +13,10 @@ object FileReader {
             throw Exception("Inexistent file")
         }
         val reader = file.read().utf8Reader()
+        return readCsv(reader)
+    }
+
+    fun readCsv(reader: Reader): MutableList<List<String>> {
         val result = mutableListOf<List<String>>()
 
         try {
@@ -38,10 +42,11 @@ object FileReader {
 
     fun Reader.readWords(): List<String>? {
         val words = mutableListOf<String>()
-        var word: String? = readWord() ?: return null
-        while (word != null) {
-            words += word
-            word = readWord()
+        var wordResult: ReadResult? = readWord() ?: return null
+        while (wordResult != null) {
+            words += wordResult.word
+            if (wordResult.endLine) wordResult = null
+            else wordResult = readWord(wordResult.lastChar)
         }
         return words
     }
@@ -49,12 +54,21 @@ object FileReader {
     /**
      * @return (word,lastChar) or null for new line
      */
-    fun Reader.readWord(): String? {
+    fun Reader.readWord(lastChar: Char? = null): ReadResult? {
         val stringBuilder = StringBuilder()
-        val firstChar = read() ?: return null
+        val firstChar = read() ?: run {
+            //last char was WORD_SEPARATOR, return new word
+            if (lastChar == WORD_SEPARATOR) {
+                return ReadResult("", endLine = true)
+            }
+            return null
+        }
         when (firstChar) {
             WORD_SEPARATOR -> {
-                return stringBuilder.toString()
+                return ReadResult(
+                    stringBuilder.toString(),
+                    firstChar,
+                )
             }
             QUOTE_SEPARATOR -> {
                 //get next char
@@ -65,33 +79,51 @@ object FileReader {
                         if (char == QUOTE_SEPARATOR) {
                             stringBuilder.append('"')
                             char = read()
-                        } else return stringBuilder.toString()
+                        } else {
+                            var endLine = false
+                            if (char == ENDL_END) {
+                                endLine = true
+                            }
+                            if (char == ENDL_START) {
+                                char = read()
+                                if (char != ENDL_END) throw Exception()
+                                endLine = true
+                            }
+                            return ReadResult(stringBuilder.toString(), endLine = endLine)
+                        }
                     } else {
                         stringBuilder.append(char)
                         //avoid out of bounds
                         char = readCharFromLine() ?: break
                     }
                 } while (true)
-                return stringBuilder.toString()
+                return ReadResult(stringBuilder.toString())
             }
             ENDL_START -> {
                 val char = read()
                 if (char != ENDL_END) throw Exception()
-                return null
+                return ReadResult(stringBuilder.toString(), endLine = true)
             }
             ENDL_END -> {
-                return null
+                return ReadResult(stringBuilder.toString(), endLine = true)
             }
             else -> {
                 stringBuilder.append(firstChar)
                 var char = read()
                 //read until separators
-                while (char != WORD_SEPARATOR && char != ENDL_START) {
+                while (char != WORD_SEPARATOR && char != ENDL_START && char != ENDL_END) {
                     stringBuilder.append(char)
                     //avoid out of bounds
                     char = readCharFromLine() ?: break
                 }
-                return stringBuilder.toString()
+                if (char == ENDL_START) {
+                    char = read()
+                    if (char != ENDL_END) throw Exception()
+                }
+                return ReadResult(
+                    stringBuilder.toString(),
+                    endLine = char != WORD_SEPARATOR
+                )
             }
         }
     }
@@ -109,6 +141,7 @@ object FileReader {
 
     const val WORD_SEPARATOR = ','
     const val QUOTE_SEPARATOR = '"'
+
     const val ENDL_START = '\r'
     const val ENDL_END = '\n'
 }
