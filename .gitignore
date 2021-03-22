@@ -4,3 +4,5 @@
 /build/
 /build/classes/kotlin/jvm/main/
 /build/classes/kotlin/linux/main/
+/ios
+/android
