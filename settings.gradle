@@ -1,4 +1,0 @@
-rootProject.name = 'strings-mobile'
-
-
-enableFeaturePreview('GRADLE_METADATA')

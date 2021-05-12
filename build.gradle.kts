@@ -5,8 +5,9 @@ buildscript {
         }
     }
 }
+
 plugins {
-    kotlin("multiplatform") version "1.4.31"
+    kotlin("multiplatform") version "1.4.32"
     `maven-publish`
 }
 
@@ -24,23 +25,16 @@ version = "0.2"
 kotlin {
 
     //java
-    jvm() {
+    jvm {
         compilations.getByName("main") {
             kotlinOptions {
                 jvmTarget = "15"
             }
         }
-        withJava()
         tasks.getByName<Jar>("jvmJar") {
             manifest {
                 attributes["Main-Class"] = "sample.MainKt"
             }
-//            from {
-////                configurations.runtimeClasspath.collect {
-////                    if (it.isDirectory()) it
-////                    else zipTree(it)
-////                }
-//            }
         }
     }
 
@@ -76,6 +70,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api("pw.binom.io:file:0.1.28")
+//                api("com.squareup.okio:okio-multiplatform:2.10.0")
                 api("com.github.ajalt.clikt:clikt:3.1.0")
             }
         }
