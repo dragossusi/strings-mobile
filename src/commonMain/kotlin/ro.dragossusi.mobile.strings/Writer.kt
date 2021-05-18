@@ -29,10 +29,11 @@ abstract class Writer {
             if (lang.isEmpty()) return@forEach
             val stringBuilder = StringBuilder()
             writeHeader(stringBuilder)
-            content.keys.forEachIndexed { keyIndex, key ->
-                val value = content.values[lang]!![keyIndex]
-                if (value.isEmpty()) return@forEachIndexed
-                writeEntry(stringBuilder, key, value)
+            content.keys.forEach { key ->
+                val value = content.values[lang]!!.items.get(key)
+                if (!value.isNullOrEmpty()) {
+                    writeEntry(stringBuilder, key, value)
+                }
             }
             writeFooter(stringBuilder)
             FileReader.writeFile(createExportPath(path, lang), stringBuilder.toString())

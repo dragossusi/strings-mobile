@@ -5,16 +5,26 @@ import ro.dragossusi.mobile.strings.print.warning
 class CsvData constructor(
     val languages: List<String>,
     val keys: List<String>,
-    val values: Map<String, List<String>>,
+    val values: Map<String, TranslationsData>,
     val size: Int
 ) {
 
+    init {
+        val size = keys.size
+        values.forEach {
+            if (it.value.items.size != size) {
+                throw Exception("Got less values than keys for ${it.key}")
+            }
+        }
+    }
+
     fun check() {
         val max = values.values.maxOfOrNull {
-            it.count(String::isNotEmpty)
+            it.countNonEmptyItems()
         } ?: return
         values.forEach { (key, value) ->
-            if (value.count(String::isNotEmpty) != max) {
+            val nonEmptyValuesCount = value.countNonEmptyItems()
+            if (nonEmptyValuesCount != max) {
                 warning(
                     "$key has less values",
                 )
@@ -27,10 +37,10 @@ class CsvData constructor(
             val header = csv.first()
             val languages = mutableListOf<String>()
             //map of langauge:list of translations
-            val translates: MutableMap<String, MutableList<String>> = mutableMapOf()
+            val translates: MutableMap<String, MutableMap<String, String>> = mutableMapOf()
             for (i in 1 until header.size) {
                 languages.add(header[i])
-                translates[header[i]] = mutableListOf()
+                translates[header[i]] = mutableMapOf()
             }
             val keys = mutableListOf<String>()
             //every language
@@ -46,16 +56,15 @@ class CsvData constructor(
                     }"
                 )
                 //read key
-                keys += line.first()
+                val translationKey = line.first()
+                keys += translationKey
                 //read values
                 for (lnaguageIndex in 0 until languages.size) {
                     //every column
                     val list = translates[languages[lnaguageIndex]]!!
                     try {
-                        list.add(
-                            //word
-                            line[lnaguageIndex + 1]
-                        )
+                        //word
+                        list[translationKey] = line[lnaguageIndex + 1]
                     } catch (e: Exception) {
                         println(e)
                     }
@@ -64,7 +73,9 @@ class CsvData constructor(
             return CsvData(
                 languages,
                 keys,
-                translates,
+                translates.mapValues {
+                    TranslationsData(it.key, it.value)
+                },
                 keys.size
             )
         }
