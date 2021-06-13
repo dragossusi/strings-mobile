@@ -9,7 +9,7 @@ object IosWriter : Writer() {
 
     override fun createExportPath(path: String, lang: String): String {
         val exportPath = "$path/ios"
-        return "$exportPath/${lang.toLowerCase()}.strings"
+        return "$exportPath/${lang.lowercase()}.strings"
     }
 
     override fun writeHeader(stringBuilder: StringBuilder) {

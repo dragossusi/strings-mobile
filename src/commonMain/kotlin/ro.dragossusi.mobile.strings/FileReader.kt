@@ -1,19 +1,24 @@
 package ro.dragossusi.mobile.strings
 
-import pw.binom.io.Reader
+import pw.binom.io.*
 import pw.binom.io.file.*
-import pw.binom.io.use
-import pw.binom.io.utf8Reader
 import pw.binom.toByteBufferUTF8
 
 object FileReader {
 
-    fun readCsv(path: String): List<List<String>> {
+    fun readCsv(
+        path: String,
+        useUTF8: Boolean
+    ): List<List<String>> {
         val file = File(path)
         if (!file.isExist) {
             throw Exception("Inexistent file")
         }
-        val reader = file.read().utf8Reader()
+        val reader = if (useUTF8) {
+            file.read().utf8Reader()
+        } else {
+            file.read().bufferedReader()
+        }
         return readCsv(reader)
     }
 

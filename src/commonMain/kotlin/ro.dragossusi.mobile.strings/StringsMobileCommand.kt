@@ -5,10 +5,11 @@ import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.default
 import com.github.ajalt.clikt.parameters.arguments.validate
 import com.github.ajalt.clikt.parameters.options.default
+import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.enum
-import pw.binom.io.file.File
-import pw.binom.io.file.isExist
+import pw.binom.copyTo
+import pw.binom.io.file.*
 
 class StringsMobileCommand : CliktCommand() {
 
@@ -19,8 +20,12 @@ class StringsMobileCommand : CliktCommand() {
     val platform: WriteTarget by option(help = "platform").enum<WriteTarget>()
         .default(WriteTarget.ALL)
 
+    val useUTF8:Boolean by option(help = "Choose to use UTF8 reader").flag(default = false)
+
     override fun run() {
-        val data = CsvData.from(FileReader.readCsv(path))
+        File(path).read().copyTo(File("copy.csv").write())
+        println(File(path).readText())
+        val data = CsvData.from(FileReader.readCsv(path,useUTF8))
 
         data.check()
 

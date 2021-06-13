@@ -7,7 +7,7 @@ buildscript {
 }
 
 plugins {
-    kotlin("multiplatform") version "1.4.32"
+    kotlin("multiplatform") version "1.5.10"
     `maven-publish`
 }
 
@@ -69,7 +69,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api("pw.binom.io:file:0.1.28")
+                api("pw.binom.io:file:0.1.29")
 //                api("com.squareup.okio:okio-multiplatform:2.10.0")
                 api("com.github.ajalt.clikt:clikt:3.1.0")
             }

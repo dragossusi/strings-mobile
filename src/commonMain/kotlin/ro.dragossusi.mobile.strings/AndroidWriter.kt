@@ -9,7 +9,7 @@ object AndroidWriter : Writer() {
 
     override fun createExportPath(path: String, lang: String): String {
         val exportPath = "$path/android"
-        return "$exportPath/values-${lang.toLowerCase()}/strings.xml"
+        return "$exportPath/values-${lang.lowercase()}/strings.xml"
     }
 
     override fun writeHeader(stringBuilder: StringBuilder) {
