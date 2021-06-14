@@ -1,8 +1,10 @@
 package ro.dragossusi.mobile.strings
 
+import pw.binom.ByteBuffer
 import pw.binom.io.*
 import pw.binom.io.file.*
 import pw.binom.toByteBufferUTF8
+import pw.binom.writeUTF8String
 
 object FileReader {
 
@@ -39,8 +41,8 @@ object FileReader {
     fun writeFile(path: String, content: String): Boolean {
         val file = File(path)
         file.parent?.mkdirs()
-        file.write().use {
-            it.write(content.toByteBufferUTF8())
+        file.write().bufferedWriter().use {
+            it.append(content)
             it.flush()
         }
         return true
