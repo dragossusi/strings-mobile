@@ -117,7 +117,7 @@ object FileReader {
             }
             else -> {
                 stringBuilder.append(firstChar)
-                var char = read()
+                var char = readCharFromLine()
                 //read until separators
                 while (char != WORD_SEPARATOR && char != ENDL_START && char != ENDL_END) {
                     stringBuilder.append(char)
@@ -130,7 +130,8 @@ object FileReader {
                 }
                 return ReadResult(
                     stringBuilder.toString(),
-                    endLine = char != WORD_SEPARATOR
+                    endLine = char != WORD_SEPARATOR,
+                    lastChar = char
                 )
             }
         }
