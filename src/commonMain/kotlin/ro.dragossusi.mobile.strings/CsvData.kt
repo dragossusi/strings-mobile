@@ -39,8 +39,12 @@ class CsvData constructor(
             //map of langauge:list of translations
             val translates: MutableMap<String, MutableMap<String, String>> = mutableMapOf()
             for (i in 1 until header.size) {
-                languages.add(header[i])
-                translates[header[i]] = mutableMapOf()
+                val headerItem = header[i]
+                if (languages.contains(headerItem)) {
+                    throw Exception("Duplicate key: headerItem")
+                }
+                languages.add(headerItem)
+                translates[headerItem] = mutableMapOf()
             }
             val keys = mutableListOf<String>()
             //every language

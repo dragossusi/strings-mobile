@@ -29,6 +29,7 @@ object AndroidWriter : Writer() {
 
     private fun transform(content: String): String {
         return content.replace("'", "\\'")
+            .replace("&","&amp;")
     }
 
 }
